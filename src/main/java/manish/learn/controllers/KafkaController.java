@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/kafka3")
+@RequestMapping("/kafka")
 public class KafkaController {
 
     private final Producer producer;
