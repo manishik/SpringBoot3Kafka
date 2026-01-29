@@ -1,19 +1,44 @@
 services:
-  broker:
-    image: apache/kafka:latest
-    container_name: kafkamanishbroker
-    ports: 
+  kafka:
+    image: confluentinc/cp-kafka:7.6.1
+    container_name: manish-kraft
+    ports:
       - "9092:9092"
+
+    volumes:
+      - ./kafka_server_jaas.conf:/opt/kafka/config/kafka_server_jaas.conf:ro
+
     environment:
+      # ---- KRaft ----
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
       KAFKA_NODE_ID: 1
-      KAFKA_PROCESS_ROLES: broker,controller
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_PROCESS_ROLES: broker, controller
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
-      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+
+      # ---- Listeners ----
+      KAFKA_LISTENERS: BROKER://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: BROKER://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,BROKER:SASL_PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: BROKER
+
+      # ---- SASL / OAuth ----
+      KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL: OAUTHBEARER
+      KAFKA_LISTENER_NAME_BROKER_SASL_ENABLED_MECHANISMS: OAUTHBEARER
+
+      KAFKA_LISTENER_NAME_BROKER_OAUTHBEARER_SASL_LOGIN_CALLBACK_HANDLER_CLASS: org.apache.kafka.common.security.oauthbearer.secured.OAuthBearerLoginCallbackHandler
+      KAFKA_LISTENER_NAME_BROKER_OAUTHBEARER_SASL_SERVER_CALLBACK_HANDLER_CLASS: org.apache.kafka.common.security.oauthbearer.secured.OAuthBearerValidatorCallbackHandler
+
+      KAFKA_LISTENER_NAME_BROKER_SASL_OAUTHBEARER_EXPECTED_AUDIENCE: account
+
+      KAFKA_OPTS: "-Djava.security.auth.login.config=/opt/kafka/config/kafka_server_jaas.conf"
+
+      KAFKA_LISTENER_NAME_BROKER_SASL_OAUTHBEARER_TOKEN_ENDPOINT_URL: "http://host.docker.internal:8080/realms/master/protocol/openid-connect/token"
+      KAFKA_LISTENER_NAME_BROKER_SASL_OAUTHBEARER_JWKS_ENDPOINT_URL: "http://host.docker.internal:8080/realms/master/protocol/openid-connect/certs"
+      KAFKA_LISTENER_NAME_BROKER_SASL_OAUTHBEARER_CLIENT_ID: "kafka_manish_client"
+      KAFKA_LISTENER_NAME_BROKER_SASL_OAUTHBEARER_CLIENT_SECRET: "HKnOViFML5m3RepTUhdHhqpriTbc4wTL"
+
+      # ---- Internal topics ----
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      KAFKA_NUM_PARTITIONS: 3
