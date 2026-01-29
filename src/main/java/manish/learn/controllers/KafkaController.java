@@ -1,7 +1,7 @@
 package manish.learn.controllers;
 
-import manish.learn.engine.Consumer;
-import manish.learn.engine.Producer;
+import manish.learn.consumers.Consumer;
+import manish.learn.producers.Producer;
 import manish.learn.model.Employee;
 import org.springframework.web.bind.annotation.*;
 
