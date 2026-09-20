@@ -6,7 +6,7 @@ services:
       - "9092:9092"
 
     volumes:
-      - ./kafka_server_jaas.conf:/opt/kafka/config/kafka_server_jaas.conf:ro
+      - ./infra/kafka/kafka_server_jaas.conf:/opt/kafka/config/kafka_server_jaas.conf:ro
 
     environment:
       # ---- KRaft ----
@@ -35,8 +35,8 @@ services:
 
       KAFKA_LISTENER_NAME_BROKER_SASL_OAUTHBEARER_TOKEN_ENDPOINT_URL: "http://host.docker.internal:8080/realms/master/protocol/openid-connect/token"
       KAFKA_LISTENER_NAME_BROKER_SASL_OAUTHBEARER_JWKS_ENDPOINT_URL: "http://host.docker.internal:8080/realms/master/protocol/openid-connect/certs"
-      KAFKA_LISTENER_NAME_BROKER_SASL_OAUTHBEARER_CLIENT_ID: "kafka_manish_client"
-      KAFKA_LISTENER_NAME_BROKER_SASL_OAUTHBEARER_CLIENT_SECRET: "HKnOViFML5m3RepTUhdHhqpriTbc4wTL"
+      KAFKA_LISTENER_NAME_BROKER_SASL_OAUTHBEARER_CLIENT_ID: "manish_client"
+      KAFKA_LISTENER_NAME_BROKER_SASL_OAUTHBEARER_CLIENT_SECRET: "xmKRuDdkOWV1RLF30LuFOkyBV6gKFJsunF98FYHSUvqEqsJASjVReZdSc09bEh6ep51ccFBPcPiYabYUq4q23w"
 
       # ---- Internal topics ----
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
